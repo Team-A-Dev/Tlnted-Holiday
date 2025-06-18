@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Reset The Web Orders -->
+    <link rel="stylesheet" href="css/normalize.css"/>
+    <!-- Link The Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- Link Font Awesome -->
+    <link rel="stylesheet" href="css/all.min.css">
+    <!-- Link Main CSS File  -->
+    <link rel="stylesheet" href="css/calendarPage.css"/>
+    <!-- Icon Logo -->
+    <link rel="icon" href="image/icon-logo.png" type="image/x-icon"/>
+    <title>Tlnted | Calender</title>
+</head>
+<body>
+    <!-- Start header -->
+    <div class="logo">
+        <img src="image/logo.png" alt="logo">
+    </div>
+    <div class="head">
+        <div class="content">
+            <h1>Hello <span class="mark">User,</span></h1>
+            <p>Pick your holidays and plan the year your way.</p>
+        </div>
+    </div>
+    <!-- End header -->
+
+    <!-- Start Calendar -->
+
+  <!-- Calendar and Sidebar Summary -->
+  <div id="calendar"></div>
+  <div class="color-key">
+    <div class="content-box">
+      <i class="fa-solid fa-fan fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
+      <p>TLNTED Holiday</p>
+    </div>
+    <div class="content-box">    
+      <i class="fa-solid fa-fan fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
+      <p>Client Holiday</p>
+    </div>
+    <div class="content-box">    
+      <i class="fa-solid fa-fan fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
+      <p>Bank Holiday</p>
+    </div>
+    <div class="content-box">    
+      <i class="fa-solid fa-fan fa-rotate-by" style="--fa-rotate-angle: 45deg;"></i>
+      <p>Christmas Holiday</p>
+    </div>
+  </div>
+  <!-- Start Next button -->
+   <div class="link">
+     <a class="next-button" href="summeryPage.html" id="nextBtn">Next</a>
+   </div>
+  <!-- End Next button -->  
+  <div id="summary">
+    <h3>Events Summary</h3>
+    <div id="summaryContent">No events yet.</div>
+  </div>
+
+
+  <!-- Custom Modal for Event Creation -->
+  <div id="modalBackdrop"></div>
+  <div id="eventModal">
+    <label for="eventTitle">Enter Event Title:</label>
+    <input type="text" id="eventTitle" class="modal-input" />
+    <div style="margin-top: 10px;">
+      <button class="modal-btn" id="saveEventBtn">Save</button>
+      <button class="modal-btn cancel" id="cancelEventBtn">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Custom Modal for Event Deletion -->
+  <div id="deleteModal">
+    <div class="modal-message" id="deleteMessage"></div>
+    <div style="text-align: right;">
+      <button class="modal-btn confirm" id="confirmDeleteBtn">Delete</button>
+      <button class="modal-btn cancel" id="cancelDeleteBtn">Cancel</button>
+    </div>
+  </div>
+</body>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
+    <script src="js/calendarPage.js"></script>
+
+
+</html>

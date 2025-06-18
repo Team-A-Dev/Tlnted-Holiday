@@ -1,0 +1,70 @@
+      @media (max-width: 768px) {
+  /* خليه عمودى */
+  .fc-header-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+                  background-color: yellow;
+
+  }
+
+  /* نفترض الترتيب في DOM: 
+     chunk1 = prev,next,today
+     chunk2 = title
+     chunk3 = dayGridMonth,timeGridWeek,timeGridDay
+  */
+
+  /* الصف الأول: الأزرار prev, next, today */
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(1) {
+    /* display: flex; */
+    justify-content: space-between !important;
+    /* align-items: center; */
+    order: 1;
+    /* padding: 0 10px; */
+  }
+
+  /* اليوم today على الشمال، و prev/next على اليمين */
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(1) .fc-button:first-child {
+    /* order: 1; */
+  }
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(1) .fc-button:nth-child(2),
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(1) .fc-button:nth-child(3) {
+    /* order: 2; */
+  }
+
+  /* الصف الثاني: العنوان */
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(2) {
+    order: 3;
+    /* display: flex; */
+    justify-content: center;
+    /* font-size: 1.5em; */
+    /* font-weight: 600; */
+  }
+
+  /* الصف التالت: أزرار العرض */
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(3) {
+    order: 2;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .fc-header-toolbar > .fc-toolbar-chunk:nth-child(3) .fc-button {
+    padding: 6px 14px;
+    border-radius: 6px;
+  }
+}
+
+@media(max-width:768px){
+  #my-calendar .fc-toolbar-right {
+    /* width: 2px; */
+    /* position: relative; */
+    /* top:50%; */
+    /* position: absolute;*/
+    /* width: 2px; */
+    background-color: blue;
+    color:red;
+  }
+}

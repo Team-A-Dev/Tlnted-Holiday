@@ -1,0 +1,96 @@
+/* Start Variable*/
+:root{
+    --main-color:rgb(12, 42, 67);
+    --second-color:rgb(253, 235, 77);
+    --transparent-color:rgb(15 116 143 / 70%);
+    --Tlnted-Holiday:rgb(143, 109, 243);
+    --Client-Holiday:rgb(75, 245, 174);
+    --Bank-Holiday:rgb(0, 178, 228);
+    --Christmas-Holiday:rgb(237, 94, 139);
+    --section-padding:100px;
+}
+/* End Variable*/
+/* Start Global Rules */
+*{
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body{
+    font-family: "Open Sans", sans-serif;
+    background-color: var(--main-color);
+}
+
+ul {
+    list-style: none;
+}
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+/* small */
+@media (min-width : 768px){
+    .container{
+        width:750px;
+    }
+}
+/* mediam */
+@media (min-width : 992px){
+    .container{
+        width : 970px;
+    }
+}
+/* large */
+@media (min-width:1200px){
+    .container{
+        width:1170px;
+    }
+}
+/* End Global Rules */
+
+/* Start Header */
+.header .container img{
+    max-width: 200px;
+    max-height: 100%;
+    padding-top: 10px;
+}
+/* End Header */
+
+/* Start Content */
+.content .container{
+    /* background-color: red; */
+    margin-top: 200px;
+    text-align: center;
+}
+.content .container p span{
+    color: var(--second-color);
+    font-size: 75px;
+    margin-right: -12px;
+}
+.content .container p:nth-child(1){
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.content .container p:nth-child(2){
+    color: white;
+    font-size: 30px;
+}
+@media(max-width:768px){
+    .content .container p:nth-child(2) {
+        font-size: 20px;
+        letter-spacing: .4px;
+    }
+}
+/* End Content */

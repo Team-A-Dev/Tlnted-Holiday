@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FullCalendar with Final Summary Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    #mainView {
+      display: flex;
+      gap: 20px;
+    }
+
+    #calendar {
+      max-width: 700px;
+      flex: 2;
+    }
+
+    #summary {
+      flex: 1;
+      max-width: 300px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      background: #fafafa;
+      height: fit-content;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .month-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #aaa;
+      padding-bottom: 5px;
+      font-size: 16px;
+    }
+
+    .event-summary {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .color-box {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      border-radius: 3px;
+      border: 1px solid #999;
+    }
+
+    .event-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .event-name {
+      font-weight: 600;
+    }
+
+    .event-duration, .event-range {
+      font-size: 12px;
+      color: #555;
+    }
+
+    #nextButton {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: rgb(75, 245, 174);
+      border: none;
+      border-radius: 5px;
+    }
+
+    #fullSummaryView {
+      display: none;
+    }
+
+    #fullSummaryView h2 {
+      margin-top: 0;
+    }
+
+    .full-summary-item {
+      margin: 10px 0;
+      padding: 10px;
+      border-left: 6px solid rgb(75, 245, 174);
+      background: #f0fdf8;
+      border-radius: 6px;
+    }
+
+    .back-button {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 8px 16px;
+      background: #ddd;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Calendar View -->
+  <div id="mainView">
+    <div id="calendar"></div>
+    <div id="summary">
+      <h3>Events Summary</h3>
+      <div id="summaryContent">No events yet.</div>
+      <button id="nextButton">Next</button>
+    </div>
+  </div>
+
+  <!-- Full Summary Page -->
+  <div id="fullSummaryView">
+    <h2>Full Events Summary</h2>
+    <div id="fullSummaryContent"></div>
+    <a href="#" class="back-button" id="backBtn">← Back to Calendar</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const calendarEl = document.getElementById('calendar');
+      const summaryContent = document.getElementById('summaryContent');
+      const nextButton = document.getElementById('nextButton');
+      const fullSummaryView = document.getElementById('fullSummaryView');
+      const mainView = document.getElementById('mainView');
+      const fullSummaryContent = document.getElementById('fullSummaryContent');
+      const backBtn = document.getElementById('backBtn');
+
+      const EVENT_COLOR = 'rgb(75, 245, 174)';
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        selectable: true,
+        editable: true,
+        eventColor: EVENT_COLOR,
+        eventBorderColor: EVENT_COLOR,
+
+        select: function (info) {
+          const title = prompt('Enter Event Title (or leave blank to cancel):');
+          if (title && title.trim() !== '') {
+            calendar.addEvent({
+              title: title.trim(),
+              start: info.startStr,
+              end: info.endStr,
+              allDay: true,
+              backgroundColor: EVENT_COLOR,
+              borderColor: EVENT_COLOR
+            });
+            updateSummary();
+          }
+          calendar.unselect();
+        },
+
+        eventClick: function (info) {
+          if (confirm(`Delete the event: "${info.event.title}"?`)) {
+            info.event.remove();
+            updateSummary();
+          }
+        },
+
+        eventChange: function () {
+          updateSummary();
+        },
+
+        datesSet: function () {
+          updateSummary();
+        },
+
+        events: []
+      });
+
+      calendar.render();
+
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        return `${day}/${month}`;
+      }
+
+      function daysBetween(start, end) {
+        const msPerDay = 1000 * 60 * 60 * 24;
+        return Math.round((new Date(end) - new Date(start)) / msPerDay);
+      }
+
+      function updateSummary() {
+        const events = calendar.getEvents();
+        const currentStart = calendar.view.currentStart;
+        const currentEnd = calendar.view.currentEnd;
+
+        const visibleEvents = events.filter(event =>
+          event.start < currentEnd && event.end > currentStart
+        );
+
+        if (visibleEvents.length === 0) {
+          summaryContent.innerHTML = 'No events in this month.';
+          return;
+        }
+
+        const currentMonthName = currentStart.toLocaleString('default', { month: 'long', year: 'numeric' });
+        let html = `<div class="month-title">${currentMonthName}</div>`;
+
+        visibleEvents.forEach(event => {
+          const durationDays = daysBetween(event.start, event.end);
+          const rangeText = `${formatDate(event.start)} to ${formatDate(event.end)}`;
+          html += `
+            <div class="event-summary">
+              <div class="color-box" style="background-color: ${EVENT_COLOR};"></div>
+              <div class="event-info">
+                <div class="event-name">${event.title}</div>
+                <div class="event-duration">${durationDays} day${durationDays > 1 ? 's' : ''}</div>
+                <div class="event-range">${rangeText}</div>
+              </div>
+            </div>
+          `;
+        });
+
+        summaryContent.innerHTML = html;
+      }
+
+      // ✅ Show big full summary on next button click
+      nextButton.addEventListener('click', function () {
+        const events = calendar.getEvents();
+        if (events.length === 0) {
+          fullSummaryContent.innerHTML = "<p>No events selected yet.</p>";
+        } else {
+          let html = '';
+          events.forEach(event => {
+            const durationDays = daysBetween(event.start, event.end);
+            const rangeText = `${formatDate(event.start)} to ${formatDate(event.end)}`;
+            html += `
+              <div class="full-summary-item">
+                <strong>${event.title}</strong><br />
+                Duration: ${durationDays} day${durationDays > 1 ? 's' : ''}<br />
+                Dates: ${rangeText}
+              </div>
+            `;
+          });
+          fullSummaryContent.innerHTML = html;
+        }
+
+        mainView.style.display = 'none';
+        fullSummaryView.style.display = 'block';
+      });
+
+      backBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        fullSummaryView.style.display = 'none';
+        mainView.style.display = 'flex';
+      });
+
+      updateSummary();
+    });
+  </script>
+
+</body>
+</html>

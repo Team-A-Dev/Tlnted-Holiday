@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Reset The Web Orders -->
+    <link rel="stylesheet" href="css/normalize.css"/>
+    <!-- Link The Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- Link Font Awesome -->
+    <link rel="stylesheet" href="css/all.min.css">
+
+    <!-- Link Main CSS File  -->
+    <!-- <link rel="stylesheet" href="css/summeryPage.css"/> -->
+    <!-- Link Calendar CSS File  -->
+    <link rel="stylesheet" href="css/summeryPage.css"/>
+    <!-- Link Calendar2 CSS File  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/main.min.css"/>
+    <title>Tlnted | Summary</title>
+    <!-- Icon Logo -->
+    <link rel="icon" href="image/icon-logo.png" type="image/x-icon"/>
+
+</head>
+<body>
+  <!-- Start Header -->
+  <div class="header">
+      <div class="container">
+          <img src="/image/logo.png" alt="logo">
+      </div>
+  </div>
+  <!-- End Header -->
+
+  <!-- start Content -->
+  <div class="content">
+    <div class="container">
+      <h2>These are the holidays you've chosen for the team this year.</h2>
+    </div>
+  </div>
+  <!-- End Content -->
+  
+  <!-- Start Summery Calendar -->
+  <div id="summaryCalendar" class="year-calendar"></div>
+  <!-- End Summery Calendar -->
+
+
+<div style="text-align: center; margin-top: 40px;">
+  <button id="backBtn" class="btn">Back</button>
+  <button id="submitBtn" class="btn submit">Submit</button>
+</div>
+
+  <div id="submitPopup" class="popup">
+    <div class="popup-content">
+      <p>Your holiday selections have been submitted successfully!</p>
+      <button id="closePopup">OK</button>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const calendarContainer = document.getElementById('summaryCalendar');
+  const rawEvents = localStorage.getItem('userEvents');
+  if (!rawEvents) {
+    calendarContainer.innerHTML = '<p style="text-align:center;">No holiday data found.</p>';
+    return;
+  }
+
+  const userEvents = JSON.parse(rawEvents);
+
+  const groupedEvents = {};
+
+  userEvents.forEach(ev => {
+    const start = new Date(ev.start);
+    const end = new Date(ev.end);
+    const title = ev.title;
+
+    const startYear = start.getFullYear();
+    const endYear = end.getFullYear();
+
+    for (let year = startYear; year <= endYear; year++) {
+      const startMonth = (year === startYear) ? start.getMonth() : 0;
+      const endMonth = (year === endYear) ? end.getMonth() : 11;
+
+      for (let month = startMonth; month <= endMonth; month++) {
+        const key = `${year}-${month}`;
+        if (!groupedEvents[key]) groupedEvents[key] = [];
+
+        // Calculate the actual range for this month
+        const rangeStart = new Date(year, month, 1);
+        const rangeEnd = new Date(year, month + 1, 0);
+
+        const actualStart = new Date(Math.max(start, rangeStart));
+        const actualEnd = new Date(Math.min(end, rangeEnd));
+
+        groupedEvents[key].push({
+          title,
+          start: actualStart,
+          end: actualEnd,
+          days: Math.floor((actualEnd - actualStart) / (1000 * 60 * 60 * 24)) + 1
+        });
+      }
+    }
+  });
+
+  function formatDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = date.toLocaleString('default', { month: 'short' });
+    return `${day} ${month}`;
+  }
+
+  function getMonthName(monthIndex) {
+    return new Date(2000, monthIndex).toLocaleString('default', { month: 'long' });
+  }
+
+  for (let month = 0; month < 12; month++) {
+    const key = `2025-${month}`;
+    const events = groupedEvents[key] || [];
+
+    const monthEl = document.createElement('div');
+    monthEl.className = 'month-summary';
+
+    const header = document.createElement('h3');
+    header.textContent = getMonthName(month);
+    monthEl.appendChild(header);
+
+    if (events.length === 0) {
+      const noData = document.createElement('p');
+      noData.textContent = 'No holidays in this month.';
+      monthEl.appendChild(noData);
+    } else {
+      const totalDays = events.reduce((sum, e) => sum + e.days, 0);
+      const totalLine = document.createElement('p');
+      totalLine.innerHTML = `<strong>Total days off:</strong> ${totalDays}`;
+      monthEl.appendChild(totalLine);
+
+      events.forEach(ev => {
+        const p = document.createElement('p');
+        p.innerHTML = `
+          <span style="font-weight:600">${ev.title}</span>: 
+          ${ev.days} day${ev.days > 1 ? 's' : ''} 
+          from ${formatDate(ev.start)} to ${formatDate(ev.end)}
+        `;
+        monthEl.appendChild(p);
+      });
+    }
+
+    calendarContainer.appendChild(monthEl);
+  }
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    window.location.href = 'calendarPage.html';
+  });
+
+document.getElementById('submitBtn').addEventListener('click', () => {
+  // احذف البيانات من localStorage
+  localStorage.removeItem('userEvents');
+
+  // روح لصفحة الـ confirmation
+  window.location.href = 'submitPage.html';
+});
+});
+
+</script>
+</body>
+</html>
